@@ -7,12 +7,16 @@ use Illuminate\Http\Request;
 use thiagoalessio\TesseractOCR\TesseractOCR;
 class HomeController extends Controller {
    public function index(){
-   
-   
-  
 
-    
-       return view('home');
+
+    $Defaultlanguages=[];
+
+    foreach((new TesseractOCR())->availableLanguages() as $lang) {
+        $Defaultlanguages[] = $lang;
+    };
+
+
+       return view('home',compact('Defaultlanguages'));
    }
 
    public function upload(Request $request){
@@ -22,13 +26,13 @@ class HomeController extends Controller {
     $image-> move(public_path('images'), $filename);
 
     $ocr = new TesseractOCR(public_path("images/$filename"));
-    $ocr->lang('ara');
+    $ocr->lang('ara','en');
     $text = $ocr->run();
 
     return redirect()->back()->with('text',$text);
-   
 
-    
+
+
 
    }
 }
